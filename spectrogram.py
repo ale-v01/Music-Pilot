@@ -45,4 +45,7 @@ plot_spectrogram_segment(0, 5)  # for the first 5 seconds
 plot_spectrogram_segment(5, 10)  # for the next 5 seconds, and so on
 
 # create for loop for segments
+audio_dur = len(samples) / sample_rate
+for i in range(5, audio_dur, 5):
+    plot_spectrogram_segment(i-5, i)
 # save images as files
