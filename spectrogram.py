@@ -6,12 +6,7 @@ import os
 import re
 
 
-# # create for loop for segments
-# def sg_segments(samples, sample_rate, cat):
-#     audio_dur = len(samples) / sample_rate
-#     for i in range(5, int(round(audio_dur)) + 5, 5):
-#         plot_spectrogram_segment(i-5, i, frequencies, times, spectrogram, cat)
-
+# Segmentation of spectrogram
 def sg_segments(file, cat):
     samples, sample_rate, frequencies, times, spectrogram = spectrogram(file)
     audio_dur = len(samples)/ sample_rate
@@ -35,6 +30,7 @@ def spectrogram(file):
     return samples, sample_rate, frequencies, times, spectrogram
 
 
+# creates and saves spectrogram 
 def plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, cat):
     # obtain index for spectrogram file creation
     index = index_folder(cat)
