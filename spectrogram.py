@@ -27,11 +27,11 @@ frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, npers
 # plt.xlim([0, len(samples) / sample_rate])
 # plt.show()
 
-def plot_spectrogram_segment(start_time, end_time, num):
+def plot_spectrogram_segment(start_time, end_time, type):
     # Find the time indices corresponding to the start and end times
     start_idx = np.searchsorted(times, start_time)
     end_idx = np.searchsorted(times, end_time)
-
+    index = index_folder(type)
     # Plot a segment of the spectrogram data
     plt.figure(figsize=(10, 8))  # Adjust figsize to your preference
     plt.pcolormesh(times[start_idx:end_idx], frequencies, np.log10(spectrogram[:, start_idx:end_idx]), shading='gouraud')
@@ -40,7 +40,7 @@ def plot_spectrogram_segment(start_time, end_time, num):
     plt.colorbar(label='Intensity [dB]')
     plt.ylim([0, sample_rate / 2])  # Update this if you want to zoom into a frequency range
     plt.title(f"Spectrogram from {start_time} to {end_time} seconds")
-    plt.savefig(f'/Users/alejandrovillalobos/Documents/Music_pilot/spectrograms/sg{num}.png', dpi=300)
+    plt.savefig(f'/Users/alejandrovillalobos/Documents/Music_pilot/spectrograms/sg_{type}{index}.png', dpi=300)
     plt.close()
 
 # args: type-what type of spectorgram is it i.e. chord or music sample
@@ -58,4 +58,4 @@ def index_folder(type):
 # create for loop for segments
 audio_dur = len(samples) / sample_rate
 for i in range(5, int(round(audio_dur)) + 5, 5):
-    plot_spectrogram_segment(i-5, i, i//5)
+    plot_spectrogram_segment(i-5, i)
