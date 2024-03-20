@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.io import wavfile
 import numpy as np
+import os
+import re
 
 nperseg = 1024 # Window size
 noverlap = nperseg // 2  # 50% overlap
@@ -40,6 +42,18 @@ def plot_spectrogram_segment(start_time, end_time, num):
     plt.title(f"Spectrogram from {start_time} to {end_time} seconds")
     plt.savefig(f'/Users/alejandrovillalobos/Documents/Music_pilot/spectrograms/sg{num}.png', dpi=300)
     plt.close()
+
+# args: type-what type of spectorgram is it i.e. chord or music sample
+def index_folder(type):
+    files = os.listdir(f'/Users/alejandrovillalobos/Documents/Music_pilot/spectrograms/')
+    filename = f"sg{type}"
+    pattern = re.compile(rf"^{filename}(\d+)\.png$")
+    indices = [int(match.group(1)) for file in files if (match := pattern.match(file))]
+    # determine next available index
+    next_index = max(indices) + 1 if indices else 1
+    return next_index
+
+        
 
 # create for loop for segments
 audio_dur = len(samples) / sample_rate
