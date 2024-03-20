@@ -8,7 +8,7 @@ import re
 
 # Segmentation of spectrogram
 def sg_segments(file, cat):
-    samples, sample_rate, frequencies, times, spectrogram = spectrogram(file)
+    samples, sample_rate, frequencies, times, spectrogram = create_spectrogram(file)
     audio_dur = len(samples)/ sample_rate
     # split the spectrogram in intervals of 5 seconds
     for i in range(5, int(round(audio_dur)) + 5, 5):
@@ -22,10 +22,10 @@ def sg_segments(file, cat):
 # file: WAV file
 # cat: category of audio
 # returns variables: frequencies, times, and spectrogram
-def spectrogram(file):
+def create_spectrogram(file):
     nperseg = 1024 # Window size
     noverlap = nperseg // 2  # 50% overlap
-    sample_rate, samples = wavfile.read(f'/audio_files/{file}')
+    sample_rate, samples = wavfile.read(f'audio_files/{file}')
     frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, nperseg=nperseg, noverlap=noverlap)
     return samples, sample_rate, frequencies, times, spectrogram
 
@@ -42,13 +42,13 @@ def plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, ca
     plt.colorbar(label='Intensity [dB]')
     plt.ylim([0, sample_rate / 2])  # Update this if you want to zoom into a frequency range
     plt.title(f"Spectrogram from {interval[0]} to {interval[-1]} seconds")
-    plt.savefig(f'/spectrograms/sg_{cat}{index}.png', dpi=300)
+    plt.savefig(f'spectrograms/sg_{cat}{index}.png', dpi=300)
     plt.close()
     
 
 # args: type-what type of spectrogram is it i.e. chord or music sample
 def index_folder(cat):
-    files = os.listdir(f'/spectrograms/')
+    files = os.listdir(f'spectrograms/')
     filename = f"sg_{cat}"
     pattern = re.compile(rf"^{filename}(\d+)\.png$")
     indices = [int(match.group(1)) for file in files if (match := pattern.match(file))]
@@ -57,8 +57,8 @@ def index_folder(cat):
 
 
 def main():
-    file = input("Enter file name:")
-    cat = input("Enter category of file (chord or sample):")
+    file = input("Enter file name: ")
+    cat = input("Enter category of file (chord or sample): ")
     sg_segments(file, cat)
     return
 
