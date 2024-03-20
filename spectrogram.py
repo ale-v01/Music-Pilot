@@ -5,57 +5,66 @@ import numpy as np
 import os
 import re
 
-nperseg = 1024 # Window size
-noverlap = nperseg // 2  # 50% overlap
-sample_rate, samples = wavfile.read('output.wav')
-frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, nperseg=nperseg, noverlap=noverlap)
 
-# print("Sample Rate:", sample_rate)
-# print("Total Samples:", len(samples))
-# print("Audio Duration:", len(samples) / sample_rate, "seconds")
+# # create for loop for segments
+# def sg_segments(samples, sample_rate, cat):
+#     audio_dur = len(samples) / sample_rate
+#     for i in range(5, int(round(audio_dur)) + 5, 5):
+#         plot_spectrogram_segment(i-5, i, frequencies, times, spectrogram, cat)
 
-# plt.figure(figsize=(10, 4))
-# plt.pcolormesh(times, frequencies, 10*np.log(spectrogram))
-# plt.imshow(spectrogram)
-# plt.ylabel('Frequency [Hz]')
-# plt.xlabel('Time [sec]')
+def sg_segments(file, cat):
+    samples, sample_rate, frequencies, times, spectrogram = spectrogram(file)
+    audio_dur = len(samples)/ sample_rate
+    # split the spectrogram in intervals of 5 seconds
+    for i in range(5, int(round(audio_dur)) + 5, 5):
+        start_idx = np.searchsorted(times, i-5)
+        end_idx = np.searchsorted(times, i)
+        interval = times[start_idx:end_idx]
+        adjusted_sg = np.log10(spectrogram[:, start_idx:end_idx])
+        plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, cat)
 
-# aspect_ratio = 0.005  # This is an example; adjust it based on your data and preferences
-# plt.gca().set_aspect(aspect_ratio)
 
-# # Set the x-axis limits to match the audio duration
-# plt.xlim([0, len(samples) / sample_rate])
-# plt.show()
+# file: WAV file
+# cat: category of audio
+# returns variables: frequencies, times, and spectrogram
+def spectrogram(file):
+    nperseg = 1024 # Window size
+    noverlap = nperseg // 2  # 50% overlap
+    sample_rate, samples = wavfile.read(f'/audio_files/{file}')
+    frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, nperseg=nperseg, noverlap=noverlap)
+    return samples, sample_rate, frequencies, times, spectrogram
 
-def plot_spectrogram_segment(start_time, end_time, type):
-    # Find the time indices corresponding to the start and end times
-    start_idx = np.searchsorted(times, start_time)
-    end_idx = np.searchsorted(times, end_time)
-    index = index_folder(type)
+
+def plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, cat):
+    # obtain index for spectrogram file creation
+    index = index_folder(cat)
     # Plot a segment of the spectrogram data
     plt.figure(figsize=(10, 8))  # Adjust figsize to your preference
-    plt.pcolormesh(times[start_idx:end_idx], frequencies, np.log10(spectrogram[:, start_idx:end_idx]), shading='gouraud')
+    plt.pcolormesh(interval, frequencies, adjusted_sg, shading='gouraud')
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.colorbar(label='Intensity [dB]')
     plt.ylim([0, sample_rate / 2])  # Update this if you want to zoom into a frequency range
-    plt.title(f"Spectrogram from {start_time} to {end_time} seconds")
-    plt.savefig(f'/Users/alejandrovillalobos/Documents/Music_pilot/spectrograms/sg_{type}{index}.png', dpi=300)
+    plt.title(f"Spectrogram from {interval[0]} to {interval[-1]} seconds")
+    plt.savefig(f'/spectrograms/sg_{cat}{index}.png', dpi=300)
     plt.close()
+    
 
-# args: type-what type of spectorgram is it i.e. chord or music sample
-def index_folder(type):
-    files = os.listdir(f'/Users/alejandrovillalobos/Documents/Music_pilot/spectrograms/')
-    filename = f"sg{type}"
+# args: type-what type of spectrogram is it i.e. chord or music sample
+def index_folder(cat):
+    files = os.listdir(f'/spectrograms/')
+    filename = f"sg_{cat}"
     pattern = re.compile(rf"^{filename}(\d+)\.png$")
     indices = [int(match.group(1)) for file in files if (match := pattern.match(file))]
     # determine next available index
-    next_index = max(indices) + 1 if indices else 1
-    return next_index
+    return max(indices) + 1 if indices else 1
 
-        
 
-# create for loop for segments
-audio_dur = len(samples) / sample_rate
-for i in range(5, int(round(audio_dur)) + 5, 5):
-    plot_spectrogram_segment(i-5, i)
+def main():
+    file = input("Enter file name:")
+    cat = input("Enter category of file (chord or sample):")
+    sg_segments(file, cat)
+    return
+
+if __name__ == '__main__':
+    main()
