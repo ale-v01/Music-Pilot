@@ -41,7 +41,7 @@ def plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, ca
     plt.xlabel('Time [sec]')
     plt.colorbar(label='Intensity [dB]')
     plt.ylim([0, sample_rate / 2])  # Update this if you want to zoom into a frequency range
-    plt.title(f"Spectrogram from {interval[0]} to {interval[-1]} seconds")
+    plt.title(f"Spectrogram from {int(interval[0])} to {int(interval[-1])+1} seconds")
     plt.savefig(f'spectrograms/sg_{cat}{index}.png', dpi=300)
     plt.close()
     
