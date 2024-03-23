@@ -7,8 +7,9 @@ CHUNK = 1024  # Number of audio frames per buffer
 FORMAT = pyaudio.paInt16  # Audio format (16-bit PCM)
 CHANNELS = 1  # Single channel for microphone
 RATE = 44100  # Sample rate
-RECORD_SECONDS = 15  # Duration of recording
-WAVE_OUTPUT_FILENAME = "output.wav"  # Output filename
+RECORD_SECONDS = int(input("Length of recording in seconds: "))  # Duration of recording
+FILENAME = input("Output file name")  # Output filename
+WAVE_OUTPUT_FILENAME = f"{FILENAME}.wav"
 
 p = pyaudio.PyAudio()
 

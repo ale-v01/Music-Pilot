@@ -57,8 +57,8 @@ def index_folder(cat):
 
 
 def main():
-    file = input("Enter file name: ")
-    cat = input("Enter category of file (chord or sample): ")
+    file = input("Enter file name recording: ")
+    cat = input("Enter category of file (description): ")
     sg_segments(file, cat)
     return
 
