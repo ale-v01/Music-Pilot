@@ -8,8 +8,8 @@ FORMAT = pyaudio.paInt16  # Audio format (16-bit PCM)
 CHANNELS = 1  # Single channel for microphone
 RATE = 44100  # Sample rate
 RECORD_SECONDS = int(input("Length of recording in seconds: "))  # Duration of recording
-FILENAME = input("Output file name")  # Output filename
-WAVE_OUTPUT_FILENAME = f"{FILENAME}.wav"
+FILENAME = input("Output file name: ")  # Output filename
+WAVE_OUTPUT_FILENAME = f"audio_files/{FILENAME}.wav"
 
 p = pyaudio.PyAudio()
 
