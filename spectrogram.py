@@ -34,13 +34,16 @@ def create_spectrogram(file):
 def plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, cat):
     # obtain index for spectrogram file creation
     index = index_folder(cat)
+    # limit range of spectrogram
+    freq_limit = 2200  # 2.2 kHz
+    max_freq_index = np.where(frequencies > freq_limit)[0][0]
     # Plot a segment of the spectrogram data
     plt.figure(figsize=(10, 8))  # Adjust figsize to your preference
-    plt.pcolormesh(interval, frequencies, adjusted_sg, shading='gouraud')
+    plt.pcolormesh(interval, frequencies[:max_freq_index], adjusted_sg[:max_freq_index, :], shading='gouraud')
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.colorbar(label='Intensity [dB]')
-    plt.ylim([0, sample_rate / 2])  # Update this if you want to zoom into a frequency range
+    plt.ylim([0, 2200])  # Update this if you want to zoom into a frequency range
     plt.title(f"Spectrogram from {int(interval[0])} to {int(interval[-1])+1} seconds")
     plt.savefig(f'spectrograms/sg_{cat}{index}.png', dpi=300)
     plt.close()
