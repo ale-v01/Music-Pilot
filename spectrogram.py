@@ -19,6 +19,14 @@ def sg_segments(file, cat):
         plot_spectrogram_segment(sample_rate, interval, frequencies, adjusted_sg, cat)
 
 
+def noise_gate(spectrogram, threshold=-50):
+    # Apply a threshold to the spectrogram
+    spectrogram_db = 10 * np.log10(spectrogram)
+    spectrogram_db[spectrogram_db < threshold] = threshold
+    spectrogram_reduced_noise = 10 ** (spectrogram_db / 10)
+    return spectrogram_reduced_noise
+
+
 # file: WAV file
 # cat: category of audio
 # returns variables: frequencies, times, and spectrogram
@@ -27,7 +35,9 @@ def create_spectrogram(file):
     noverlap = nperseg // 2  # 50% overlap
     sample_rate, samples = wavfile.read(f'audio_files/{file}')
     frequencies, times, spectrogram = signal.spectrogram(samples, sample_rate, nperseg=nperseg, noverlap=noverlap)
-    return samples, sample_rate, frequencies, times, spectrogram
+    # Apply noise gating
+    spectrogram_reduced_noise = noise_gate(spectrogram)
+    return samples, sample_rate, frequencies, times, spectrogram_reduced_noise
 
 
 # creates and saves spectrogram 
